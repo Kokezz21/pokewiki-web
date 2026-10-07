@@ -1,41 +1,8 @@
-from django.http import JsonResponse
+from rest_framework import viewsets
 from .models import Pokemon
+from .serializers import PokemonSerializer
 
-def pokemon_list(request):
-    """
-    Devuelve en formato JSON la lista de Pokémon activos.
-    Incluye desafío de búsqueda opcional por parámetro ?search=.
-    """
-    query = request.GET.get("search", "")
-    pokemons = Pokemon.objects.filter(activo=True)
-
-    if query:
-        pokemons = pokemons.filter(nombre__icontains=query)
-
-    # .values() entrega cada registro como diccionario {campo: valor}
-    # list() fuerza la evaluación del QuerySet perezoso
-    data = list(pokemons.values(
-        "id", "numero_pokedex", "nombre", "tipo_primario", "tipo_secundario", "descripcion"
-    ))
-
-    # Devolvemos un objeto con count y results
-    return JsonResponse({"count": len(data), "results": data})
-
-def pokemon_detail(request, pk):
-    """
-    Desafío Destacado: detalle de un Pokémon específico.
-    Si no existe o está inactivo, devuelve un 404 en formato JSON.
-    """
-    try:
-        pokemon = Pokemon.objects.get(pk=pk, activo=True)
-        data = {
-            "id": pokemon.id,
-            "numero_pokedex": pokemon.numero_pokedex,
-            "nombre": pokemon.nombre,
-            "tipo_primario": pokemon.tipo_primario,
-            "tipo_secundario": pokemon.tipo_secundario,
-            "descripcion": pokemon.descripcion,
-        }
-        return JsonResponse(data)
-    except Pokemon.DoesNotExist:
-        return JsonResponse({"error": "Pokémon no encontrado"}, status=404)
+class PokemonViewSet(viewsets.ModelViewSet):
+    """CRUD completo de Pokémon: listar, crear, ver, editar y eliminar."""
+    queryset = Pokemon.objects.all().order_by("numero_pokedex")
+    serializer_class = PokemonSerializer
