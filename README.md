@@ -1,19 +1,27 @@
-# PokéWiki Web — Laboratorio 8: Integración Full-Stack con CRUD Completo
+# PokéWiki Web — Integración Full-Stack con CRUD y Autenticación por Token
 
-Aplicación web interactiva Full-Stack desarrollada con **Django REST Framework** en el backend y **React (Vite)** en el frontend, permitiendo la gestión integral (Crear, Leer, Actualizar y Eliminar) del catálogo de Pokémon.
-
----
-
-##  Arquitectura y Tecnologías
-
-* **Backend:** Django 5.x + Django REST Framework (DRF) + `django-cors-headers`.
-* **Frontend:** React 19 + Vite.
-* **Base de Datos:** SQLite3 (Django ORM).
-* **Comunicación:** API RESTful mediante peticiones HTTP asíncronas (`fetch`) canalizadas por el proxy de Vite (`/api/pokemon/`).
+Aplicación web interactiva Full-Stack desarrollada con **Django REST Framework** en el backend y **React (Vite)** en el frontend, permitiendo la gestión integral (Crear, Leer, Actualizar y Eliminar) del catálogo de Pokémon bajo un esquema de autenticación mediante **Tokens (`rest_framework.authtoken`)** y políticas estrictas de **CORS**.
 
 ---
 
-##  Endpoints de la API REST (`/api/pokemon/`)
+## Arquitectura y Tecnologías
+
+- **Backend:** Django 6.x + Django REST Framework (DRF) + `rest_framework.authtoken` + `django-cors-headers`.
+- **Frontend:** React 19 + Vite (`fetch` API con inyección automática de cabecera `Authorization: Token <token>`).
+- **Base de Datos:** SQLite3 (Django ORM).
+- **Seguridad y CORS:** Endpoints CRUD protegidos con `TokenAuthentication` e `IsAuthenticated`, y acceso CORS restringido exclusivamente al origen local de React (`http://localhost:5173`).
+
+---
+
+## Endpoints de la API REST
+
+### 1. Autenticación
+| Método | Endpoint | Acción | Acceso | Descripción |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/login/` | Iniciar Sesión | Público | Recibe `{ "username", "password" }` y retorna `{ "token" }`. |
+
+### 2. Gestión de Pokémon (`/api/pokemon/`)
+*Todos los endpoints siguientes requieren el encabezado `Authorization: Token <token>` (retornan `401 Unauthorized` sin credenciales válidas).*
 
 | Método | Endpoint | Acción | Descripción |
 | :--- | :--- | :--- | :--- |
@@ -25,7 +33,7 @@ Aplicación web interactiva Full-Stack desarrollada con **Django REST Framework*
 
 ---
 
-##  Evidencias de Funcionamiento (CRUD)
+## Evidencias de Funcionamiento
 
 ### 1. Creación de un nuevo Pokémon (POST)
 Operación para añadir una nueva criatura al catálogo mediante formulario con validación:
@@ -41,10 +49,9 @@ Confirmación en navegador y eliminación directa desde la base de datos:
 
 ---
 
-##  Instrucciones de Ejecución Local
+## Instrucciones de Ejecución Local
 
-### 1. Servidor Backend (Django)
-```powershell
-cd backend
-.venv\Scripts\Activate.ps1
-python manage.py runserver
+### 1. Clonar el repositorio
+```bash
+git clone [https://github.com/Kokezz21/pokewiki-web.git](https://github.com/Kokezz21/pokewiki-web.git)
+cd pokewiki-web
