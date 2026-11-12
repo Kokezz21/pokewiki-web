@@ -2,9 +2,18 @@ const BASE = "/api";
 
 async function request(ruta, opciones = {}) {
   const { headers, ...resto } = opciones;
+  
+  // Obtener el token guardado si el usuario inició sesión
+  const token = localStorage.getItem("token");
+  const authHeader = token ? { Authorization: `Token ${token}` } : {};
+
   const respuesta = await fetch(BASE + ruta, {
     ...resto,
-    headers: { "Content-Type": "application/json", ...headers },
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader,
+      ...headers,
+    },
   });
 
   if (!respuesta.ok) {
@@ -25,8 +34,12 @@ async function request(ruta, opciones = {}) {
 }
 
 export const pokemonApi = {
+  login: (credenciales) =>
+    request("/login/", { method: "POST", body: JSON.stringify(credenciales) }),
   listar: () => request("/pokemon/"),
-  crear: (datos) => request("/pokemon/", { method: "POST", body: JSON.stringify(datos) }),
-  actualizar: (id, datos) => request(`/pokemon/${id}/`, { method: "PUT", body: JSON.stringify(datos) }),
+  crear: (datos) =>
+    request("/pokemon/", { method: "POST", body: JSON.stringify(datos) }),
+  actualizar: (id, datos) =>
+    request(`/pokemon/${id}/`, { method: "PUT", body: JSON.stringify(datos) }),
   eliminar: (id) => request(`/pokemon/${id}/`, { method: "DELETE" }),
 };
