@@ -37,9 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',  # <-- Añadir
-    'corsheaders',     # <-- Añadir
-    "catalogo", # <-- Registramos nuestra app para que Django lea sus modelos
+    'rest_framework',
+    'rest_framework.authtoken',  
+    'corsheaders',
+    'catalogo',
 ]
 
 MIDDLEWARE = [
